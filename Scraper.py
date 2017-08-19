@@ -3,16 +3,15 @@ import requests
 import itertools
 import re
 
-# # #
-# A python script which scrapes Wikipedia's list of colors for the names and hex codes of each of the 1400+ colors
-# on the webpage.
-#
-# Each entry in the final list `colors` should correspond to the same index entry in `hexes`
-#
-# Any time this is edited, it should be readded to the ColorPalette Android project
-#
-# Michael Crinite 07/11/2017
-# # #
+"""
+A python script which scrapes Wikipedia's list of colors for the names and hex codes of each of the 1400+ colors
+on the webpage.
+
+Each entry in the final list `colors` should correspond to the same index entry in `hexes`, but as of
+08/19/2017, some are out of order
+
+Michael Crinite 07/11/2017
+"""
 
 # Wikipedia List of colors: A-F
 page = requests.get('https://en.wikipedia.org/wiki/List_of_colors:_A-F')
