@@ -1,12 +1,12 @@
-# # #
-# A script which will repeatedly ping a server and report back if the server is offline
-#
-# Written by Michael Crinite while he should have been doing something productive instead
-#
-# ***CURRENTLY A WORK IN PROGRESS!***
-#
-# 05.10.2016
-# # #
+"""
+A script which will repeatedly ping a server and report back if the server is offline
+
+Written by Michael Crinite while he should have been doing something productive instead
+
+***CURRENTLY A WORK IN PROGRESS!***
+
+05.10.2016
+"""
 
 from datetime import *
 import time
@@ -27,9 +27,11 @@ fromaddr = input("Enter address to send from: ")
 toaddrs = input("Enter address to send to: ")
 
 
-# Pings the server
-# Returns True if the server is online, False if the server is offline
 def pingserv():
+    """
+    Pings the server
+    Returns True if the server is online, False if the server is offline
+    """
     # Determine what OS the program is running on
     import os, platform, subprocess
     plat = platform.system().lower()
@@ -48,12 +50,12 @@ def pingserv():
             return False
 
 
-# Sends text message with report to toaddrs
 def send(subject, body):
+    """ Sends text message with report to toaddrs """
     # Format message
     msg = mime.multipart.MIMEMultipart()
-    msg['From'] = FROM
-    msg['To'] = TO
+    msg['From'] = fromaddr
+    msg['To'] = toaddrs
     msg['Subject'] = subject
     msg.attach(mime.text.MIMEText(body, 'plain'))
     message = msg.as_string()
@@ -63,12 +65,12 @@ def send(subject, body):
     server.ehlo()
     server.starttls()
     server.login(username, password)
-    server.sendmail(FROM, TO, message)
+    server.sendmail(fromaddr, toaddrs, message)
     server.quit()
 
 
-# Reports twice per hour that the server is responding to a ping test
 def online():
+    """ Reports twice per hour that the server is responding to a ping test """
     if datetime.now().minute % 30 == 0:
         subject = "Server online"
         msg = "    " + hostname + " is online at: " + str(datetime.now())
@@ -78,9 +80,13 @@ def online():
     return True
 
 
-# Reports once per minute that the server is responding to a ping test so that
-# You don't have to wait a half hour for the response via online()
 def onlinedebugmode():
+    """
+    Reports once per minute that the server is responding to a ping test so that
+    You don't have to wait a half hour for the response via online()
+
+    :return: True
+    """
     if datetime.now().second & 60 == 0:
         subject = "Server online"
         msg = "    " + hostname + " is online at: " + str(datetime.now())
@@ -90,8 +96,8 @@ def onlinedebugmode():
     return True
 
 
-# Reports once per minute that the server is not responding to a ping test
 def offline():
+    """ Reports once per minute that the server is not responding to a ping test """
     if datetime.now().second % 60 == 0:
         subject = "Server OFFLINE"
         msg = "(!) " + hostname + " is OFFLINE at: " + str(datetime.now())
@@ -102,8 +108,8 @@ def offline():
     return True
 
 
-# Tries a ping test to the server. Reports whether it was successful or not
 while True:
+    """ Tries a ping test to the server. Reports whether it was successful or not """
     if pingserv():
         online()
         # onlinedebugmode()
