@@ -3,3 +3,4 @@
 
 credentials.py
 Pinger.log
+__pycache__/
