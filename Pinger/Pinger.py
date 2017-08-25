@@ -10,13 +10,13 @@ import logging
 import os
 import platform
 import smtplib
-import time
+from time import sleep
 from datetime import *
 from email import mime
 from email.mime import multipart
 from email.mime.text import MIMEText
 
-from Pinger.credentials import get_creds
+from credentials import get_creds
 
 logger = logging.getLogger('Pinger')
 logger.setLevel(logging.INFO)
@@ -90,4 +90,4 @@ while True:
         online()
     else:
         offline()
-    time.sleep(60)  # Wait for 10 minutes
+    sleep(60)  # Wait for 10 minutes
