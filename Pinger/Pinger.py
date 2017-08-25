@@ -1,23 +1,22 @@
 """
-A script which will repeatedly ping a server and report back if the server is offline
+A script which will repeatedly ping a host and send an email to a given address regarding its status
 
 Written by Michael Crinite while he should have been doing something productive instead
 
-***CURRENTLY A WORK IN PROGRESS!***
-
-05.10.2016
+08.24.2017
 """
 
-from datetime import *
-import time
-import smtplib
-from email import mime
-from email.mime import multipart
-from email.mime.text import MIMEText
-from credentials import get_creds
 import logging
 import os
 import platform
+import smtplib
+import time
+from datetime import *
+from email import mime
+from email.mime import multipart
+from email.mime.text import MIMEText
+
+from Pinger.credentials import get_creds
 
 logger = logging.getLogger('Pinger')
 logger.setLevel(logging.INFO)
@@ -25,19 +24,14 @@ handler = logging.FileHandler(filename='Pinger.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s: %(message)s'))
 logger.addHandler(handler)
 
-# Name of server/website/computer name to ping
 hostname = get_creds('hostname')
-# Username for email account to log into
 username = get_creds('username')
-# Password for email account to log into
 password = get_creds('password')
-# Address to send mail from
 fromaddr = get_creds('fromaddr')
-# Address to send mail to (@att.txt.net)
-toaddr = get_creds('toaddr')
+toaddr = get_creds('toaddr')  # For att users, you can text by sending an email to <phone-number>@att.txt.net
 
 plat = platform.system().lower()
-
+# TODO: keep all logs. Rename old logs and move them into the "logs" folder
 
 def pingserv():
     """
@@ -70,26 +64,30 @@ def send(subject, body):
 
 
 def online():
-    """ Reports twice per hour that the server is responding to a ping test """
-    #if datetime.now().minute % 30 == 0:
-    msg = "    " + hostname + " is online at: " + str(datetime.now())
+    """
+    Reports that the host is responding to a ping test
+
+    Only sends update (pun intended) at the top of the hour
+    """
+    msg = "       " + hostname + " is online at: " + str(datetime.now())
     logger.info(msg)
-    send("Server online", msg)
+    if datetime.now().minute % 60 == 0:
+        send("Server online", msg)
+        logger.info("Status message sent to: " + toaddr)
 
 
 def offline():
-    """ Reports once per minute whether or not the server is responding to a ping test """
-    #if datetime.now().second % 60 == 0:
+    """ Reports that the host is not responding to a ping test """
     msg = "(!) " + hostname + " is OFFLINE at: " + str(datetime.now())
-    logger.error(msg)
     send("Server OFFLINE", msg)
+    logger.error(msg)
+    logger.error("Status message sent to: " + toaddr)
 
 
 while True:
     """ Tries a ping test to the server. Reports whether it was successful or not """
     if pingserv():
         online()
-        time.sleep(300)
     else:
         offline()
-        time.sleep(30)
+    time.sleep(60)  # Wait for 10 minutes
