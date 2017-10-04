@@ -10,12 +10,11 @@ import logging
 import os
 import platform
 import smtplib
-from time import sleep
 from datetime import *
 from email import mime
 from email.mime import multipart
 from email.mime.text import MIMEText
-
+from time import sleep
 from credentials import get_creds
 
 logger = logging.getLogger('Pinger')
